@@ -1,0 +1,56 @@
+# BillBoard
+
+This dataset contains the billboard top 100 record from 1999-06-05 to 2000-12-30
+
+#this analysis was carried out using R 
+
+install.packages('tidyverse')
+library(tidyverse)
+
+data()
+billboard <- data.frame(billboard)
+View(billboard)
+head(billboard)
+str(billboard)
+
+#subset dataset using R
+
+eminem<- filter(billboard,artist =='Eminem')
+pac<- filter(billboard,artist =='2 Pac')
+
+#names of artist between 200-300 on billboard
+
+artist<- billboard %>% 
+  slice(200:300) %>% 
+  select(artist) %>% 
+  distinct()
+
+#names of artist,tracks between 150-200 on billboard
+
+tracks <- billboard %>% 
+  slice(150:200) %>% 
+  select(artist,track)
+
+#songs entered between (june 2000 - july 2000)
+
+months <- billboard %>%
+  filter(date.entered >= "2000-06-01" & date.entered <= "2000-07-31") %>% 
+  arrange(desc(date.entered))
+
+#arrange the previous results according to their entry on wk1
+
+months_entry <- billboard %>%
+  filter(date.entered >= "2000-06-01" & date.entered <= "2000-07-31") %>% 
+  arrange(wk1)
+
+#How many weeks each entry stayed on the billboard
+
+billboard_entries <- billboard %>%
+  group_by(artist, track) %>%
+  summarize(total_entries = sum(!is.na(c_across(wk1:wk76)))) %>% 
+  arrange(total_entries)
+
+
+
+
+
