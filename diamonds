@@ -1,0 +1,110 @@
+install.packages('tidyverse')
+library(tidyverse)
+data("diamonds")
+
+#take a quick look  at the variables in the table
+head(diamonds)
+str(diamonds)
+
+#calculate the range available under the column 'carat'
+
+carat_range <- range(diamonds$carat)
+print(carat_range)
+
+#calculate the categories available under the column 'cut'
+
+cut_categories <- unique(diamonds$cut)
+print(cut_categories)
+
+#calculate the categories available under the column 'colour'
+
+color_types <- unique(diamonds$color)
+print(color_types)
+
+#calculate the range available under the column 'clarity'
+
+clarity_types <- unique(diamonds$clarity)
+print(clarity_types)
+
+#calculate the range available under the column 'depth'
+
+depth_types <- range(diamonds$depth)
+print(depth_types)
+
+#calculate the range available under the column 'table'
+
+table_range <- range(diamonds$table)
+print(table_types)
+
+#calculate the range available under the column 'price'
+
+price_range <- range(diamonds$price)
+print(price_range)
+
+#rename the column (x,y,z) height,width,depth respectively for better understanding
+
+diamonds<- diamonds %>% rename(length_mm = x, width_mm = y, depth_mm = z)
+print(diamonds)
+
+#group the diamonds by their weight in carat
+
+diamond <- diamonds %>%
+  group_by(carat) %>% 
+  arrange(carat)
+
+#diamonds whose price fall between $500-$1000
+
+pricing<- filter(diamonds,price >=500 & price <= 1500) %>%
+  arrange(price)
+
+#diamonds that are premium and have a depth of 50-70
+
+dantata <- diamonds %>%
+  filter(cut == "Premium" & depth >= 40 & depth <= 70) %>%
+  arrange(depth)
+
+#diamonds that are premium or very goog and have a depth of 50-70
+
+dangote <- diamonds %>%
+  filter(cut %in% c('Premium', 'Very Good') & depth >= 40 & depth <= 70) %>%
+  arrange(depth,cut)
+
+#average price of diamonds 
+
+dan<- diamonds %>% 
+  summarise(mean_price = mean(price))
+
+#numbers of different diamonds colour
+
+damini <- diamonds %>%
+  filter(color %in% c('E','I', 'J', 'H','F', 'G', 'D')) %>% 
+  count(color) %>% 
+  arrange(n)
+print(damini)
+
+#visualization using ggplot2
+
+#color of the diamonds vs count of diamonds
+
+ggplot(data = damini, aes(x = color, y = n, fill = color)) +
+  geom_col() +
+  theme_minimal() +
+  labs(x = "Color", y = "Count", title = "Number of Diamonds by Color")
+
+#diamonds price by cut
+
+ggplot(data = diamonds, aes(x = cut, y = price, colour = price)) +
+  geom_point() +
+  labs(x = "Cut", y = "Price", title = "Scatter Plot of Diamond Price by Cut")
+
+#carat vs cut (size by price)
+
+ggplot(data = diamonds, aes(x = cut, y = carat, size = price)) +
+  geom_point() +
+  labs(x = "Cut", y = "Carat", size = "Price", title = "Scatter Plot of Carat vs. Cut (Size by Price)")
+
+#carat vs clarity (color by clarity)
+
+ggplot(data = diamonds, aes(x = clarity, y = carat, color = color)) +
+  geom_point() +
+  labs(x = "Clarity", y = "Carat", color = "Color", title = "Scatter Plot of Carat vs. Clarity (Color by Clarity)")
