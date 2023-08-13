@@ -1,0 +1,212 @@
+install.packages('tidyverse')
+library(tidyverse)
+
+data("penguins")
+view(penguins)
+head(penguins)
+str(penguins)
+
+#types of species
+unique_species <- unique(penguins$species)
+view(unique_species)
+
+#number of island
+
+unique_islands <- unique(penguins$island)
+view(unique_islands)
+
+#average flipper length 
+flipper_length <- penguins %>% 
+  summarize (mean_flipper_length_mm = mean(flipper_length_mm, na.rm= TRUE))
+view (flipper_length)
+
+#average flipper length per species 
+flipper_length <- penguins %>% 
+  group_by(species) %>% 
+  summarize (mean_flipper_length_mm = mean(flipper_length_mm, na.rm= TRUE))
+view (flipper_length)
+
+
+#average bill length
+bill_length <- penguins %>% 
+  summarize (mean_bill_length = mean(bill_length_mm, na.rm=TRUE))
+view(bill_length)
+
+#average bill length per species
+bill_length <- penguins %>% 
+  group_by(species) %>% 
+  summarize (mean_bill_length = mean(bill_length_mm, na.rm=TRUE))
+view(bill_length)
+
+
+#average bill depth
+
+bill_depth <- penguins %>% 
+  summarize (mean_bill_depth = mean(bill_depth_mm, na.rm=TRUE))
+view(bill_depth)
+
+#average bill depth per species
+
+bill_depth <- penguins %>% 
+  group_by(species) %>% 
+  summarize (mean_bill_depth = mean(bill_depth_mm, na.rm=TRUE))
+view(bill_depth)
+
+#range of years 
+
+years <- penguins %>% 
+  distinct(year)
+
+#average body mass
+
+body_mass <- penguins %>% 
+  summarize(mean_body_mass = mean(body_mass_g, na.rm=TRUE))
+view(body_mass)
+
+#average body mass per species
+
+body_mass <- penguins %>%
+  group_by(species) %>%
+  summarize(mean_body_mass = mean(body_mass_g, na.rm=TRUE))
+view(body_mass)
+
+#the number of male and female penguins
+
+number_penguins <- penguins %>% 
+  count(sex, name = "count_penguins") %>% 
+  
+view(number_penguins)
+
+#the number of male and female penguins per specie
+
+sex_penguins <- penguins %>% 
+  group_by(species) %>% 
+  count(sex, name = "count_penguins")
+
+view(sex_penguins)
+
+#the number of penguins per year
+
+year_penguins <- penguins %>% 
+  group_by(species) %>% 
+  count(year, name = "count_penguins")
+
+view(year_penguins)
+
+#data visualization using ggplot2
+
+#Number of penguins per species
+
+ggplot(data = penguins, aes(x = species, fill = species)) +
+  geom_bar()
+
+#average body mass per species
+
+ggplot(data = penguins, aes(x = species, y= body_mass_g)) +
+  geom_col() +
+  labs(title = 'average body mass per specie',
+       x='species',y='body_mass')
+
+
+#the number of male and female penguins
+
+
+ggplot(data = penguins, aes(x = sex, fill = sex)) +
+  geom_bar() +
+  labs(title = "Number of Male and Female Penguins",
+       x = "Sex",
+       y = "Count") +
+  theme_minimal()
+
+
+#the number of male and female penguins per specie
+
+penguins_filtered <- drop_na(penguins, sex, species)
+
+ggplot(data=penguins_filtered, aes(x = sex, y= species, color=species))+
+  geom_jitter()
+
+
+#the number of penguins per year
+
+penguins_filtered <- drop_na(penguins, sex, species)
+
+ggplot(data=penguins_filtered, aes(x= year))+
+  geom_bar()
+
+
+#data visualization using ggplot2
+
+#Number of penguins per species
+
+ggplot(data = penguins, aes(x = species, fill = species)) +
+  geom_bar()
+
+#average body mass per species
+
+ggplot(data = penguins, aes(x = species, y= body_mass_g)) +
+  geom_col() +
+  labs(title = 'average body mass per specie',
+       x='species',y='body_mass')
+
+
+#the number of male and female penguins
+
+
+ggplot(data = penguins, aes(x = sex, fill = sex)) +
+  geom_bar() +
+  labs(title = "Number of Male and Female Penguins",
+       x = "Sex",
+       y = "Count") +
+  theme_minimal()
+
+
+#the number of male and female penguins per specie
+
+penguins_filtered <- drop_na(penguins, sex, species)
+
+ggplot(data=penguins_filtered, aes(x = sex, y= species, color=species))+
+  geom_jitter()
+
+
+#the number of penguins per year
+
+penguins_filtered <- drop_na(penguins, sex, species)
+
+ggplot(data=penguins_filtered, aes(x= year))+
+  geom_bar()
+
+
+#average flipper length per species 
+
+penguins_filtered <- drop_na(penguins, sex, species)
+
+ggplot(data=penguins_filtered, aes(x= species, y= flipper_length_mm))+
+  geom_jitter()
+
+
+#Penguins Body mass vs Penguins flipper length
+
+ggplot(data = penguins) +
+  geom_smooth(mapping = aes(x = flipper_length_mm, y = body_mass_g))+
+  geom_point(mapping = aes(x = flipper_length_mm, y = body_mass_g))
+
+
+#Penguins Body mass vs Penguins flipper length per specie
+
+ggplot(data = penguins) +
+  geom_point(mapping = aes(x = flipper_length_mm, y = body_mass_g, color=species))+
+  facet_grid(~species)
+
+#Penguins Body mass vs Penguins flipper length per sex
+
+ggplot(data = penguins) +
+  geom_point(mapping = aes(x = flipper_length_mm, y = body_mass_g, color=species))+
+  facet_grid(~sex)
+
+#Penguins Body mass vs Penguins flipper length per (sex+gender)
+
+ggplot(data = penguins) +
+  geom_point(mapping = aes(x = flipper_length_mm, y = body_mass_g, color=species))+
+  facet_grid(sex~species)
+
