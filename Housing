@@ -1,0 +1,168 @@
+install.packages('tidyverse')
+library(tidyverse)
+
+data()
+
+head(Nashville_Housing_Data_for_Data_Cleaning)
+
+house<-Nashville_Housing_Data_for_Data_Cleaning
+
+View(house)
+
+# FINDIING DUPLICATES
+duplicates <- house[duplicated(house$UniqueID), ]
+View(duplicates)
+
+#FINDING CATEGORIES
+land<- unique(house$LandUse)
+print(land)
+
+#FINDING THE YEARS AND MONTH OF SALES 
+library(lubridate)
+
+house$SaleDate <- mdy(house$SaleDate)  # Convert SaleDate to Date format
+
+# Extract year and month
+house$SaleYear <- year(house$SaleDate)
+house$SaleMonth <- month(house$SaleDate)
+
+# Extract unique years and months
+unique_years <- unique(house$SaleYear)
+unique_months <- unique(house$SaleMonth)
+
+# Print the unique years and months
+print(unique_years)
+print(unique_months)
+
+#FINDING THE RANGE OF SALES PRICE
+
+price_range <- range(na.omit(house$SalePrice))
+print(price_range)
+
+#FINDING THE AVERAGE OF SALES PRICE
+
+price_average <- mean(na.omit(house$SalePrice))
+print(price_average)
+
+#FINDING THE CATEGORIES UNDER SOLDASVACANT
+
+sold <- unique(house$SoldAsVacant)
+print(sold)
+
+#FINDING THE RANGE, AVERAGE SIZE OF ACREAGE
+
+acreage_range <- range(na.omit(house$Acreage))
+print(acreage_range)
+
+acreage_average <- mean(na.omit(house$Acreage))
+print(acreage_average)
+
+#FINDING THE RANGE, AVERAGE OF LANDVALUE
+
+landvalue_range <- range(na.omit(house$LandValue))
+print(landvalue_range)
+
+landvalue_mean <- mean(na.omit(house$LandValue))
+print(landvalue_mean)
+
+#FINDING THE RANGE, AVERAGE OF BUILDINGVALUE
+
+buildingvalue_range <- range(na.omit(house$BuildingValue))
+print(buildingvalue_range)
+
+buildingvalue_mean <- mean(na.omit(house$BuildingValue))
+print(buildingvalue_mean)
+
+#FINDING THE RANGE, AVERAGE OF TOTALVALUE
+
+totalvalue_range <- range(na.omit(house$TotalValue))
+print(totalvalue_range)
+
+totalvalue_mean <- mean(na.omit(house$TotalValue))
+print(totalvalue_mean)
+
+#FINDING THE YEAR BUILT
+
+year<- unique(house$YearBuilt)
+print(year)
+
+#FINDING THE RANGE, AVERAGE OF BEDROOM
+
+bedroom_range <- range(na.omit(house$Bedrooms))
+print(bedroom_range)
+
+bedroom_average <- mean(na.omit(house$Bedrooms))
+print(bedroom_average)
+
+#FINDING THE RANGE, AVERAGE OF FULLBATH
+
+fullbath_range <- range(na.omit(house$FullBath))
+print(fullbath_range)
+
+fullbath_average <- mean(na.omit(house$FullBath))
+print(fullbath_average)
+
+#FINDING THE RANGE, AVERAGE OF HALFBATH
+
+halfbath_range <- range(na.omit(house$HalfBath))
+print(halfbath_range)
+
+halfbath_average <- mean(na.omit(house$HalfBath))
+print(halfbath_average)
+
+
+#based on the findings i would be carrying out using this data, i would create
+#another table that contains the 11 columns i want to use.
+
+library(dplyr)
+housing <- house %>%
+  select(UniqueID, LandUse, SalePrice, Acreage,
+         LandValue, BuildingValue, TotalValue,
+         Bedrooms, FullBath, HalfBath, SaleYear)
+
+housing_cleaned <- na.omit(housing)
+
+# Average pricing for single family
+
+library(dplyr)
+
+pricing <- housing_cleaned %>%
+ filter(LandUse == "SINGLE FAMILY") %>% 
+  summarize(mean_pricing = mean(SalePrice, na.rm=TRUE))
+print(pricing)
+
+# Average acreage for single family
+
+acreage <- housing_cleaned %>%
+  filter(LandUse == "SINGLE FAMILY") %>% 
+  summarize(mean_acreage = mean(Acreage, na.rm=TRUE))
+print(acreage)
+
+#Average profit for developers who want to build and sell single family homes
+
+profit <- housing_cleaned %>%
+  filter(LandUse == "SINGLE FAMILY") %>%
+  summarise(profit_homes = mean(SalePrice - TotalValue))
+print(profit)
+
+#average fullbath for a single family 
+
+fullBath <- housing_cleaned %>%
+  filter(LandUse == "SINGLE FAMILY") %>%
+  summarise(bath = mean(FullBath))
+print(fullBath)
+
+#average halfbath for a single family
+
+halfBath <- housing_cleaned %>%
+  filter(LandUse == "SINGLE FAMILY") %>%
+  summarise(bath = mean(HalfBath))
+print(halfBath)
+
+#average bathroom for a single family 
+
+bathroom <- housing_cleaned %>%
+  filter(LandUse == "SINGLE FAMILY", ) %>%
+  summarise(bath = mean(Bedrooms))
+print(bathroom)
+
