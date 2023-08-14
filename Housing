@@ -166,3 +166,5 @@ bathroom <- housing_cleaned %>%
   summarise(bath = mean(Bedrooms))
 print(bathroom)
 
+#all these queries was conducted for when landuse==single family, if you need to get similar answers for the other 38 landuses
+#all you need to do is replace "single family" with your preferred option
