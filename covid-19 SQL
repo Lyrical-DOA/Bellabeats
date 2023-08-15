@@ -1,0 +1,128 @@
+#try to get a sense of the data by checking the unique characters in some columns 
+
+select distinct iso_code 
+from dami-389701.corona.corona_death
+
+select distinct continent
+from dami-389701.corona.corona_death
+
+select distinct location 
+from dami-389701.corona.corona_death
+
+#most of the continents were also included as locations
+#the iso_code was used to reresent each loocation 
+
+
+
+#show continent with the highest covid infections 
+
+SELECT
+  continent,
+  SUM(population) as population,
+  SUM(total_cases) AS total_cases,
+  SUM(total_vaccinations) AS total_vaccinations,
+  SUM(total_vaccinations/population) AS percent_vaccinated,
+  SUM(total_deaths) AS total_deaths,
+  SUM(total_deaths/population) AS percent_deaths
+FROM
+  dami-389701.corona.corona_death
+WHERE
+  continent IS NOT NULL
+GROUP BY
+  continent
+ORDER BY
+  total_cases DESC;
+
+#show locations with the highest covid infections 
+
+SELECT
+  location,
+  SUM(population) as population,
+  SUM(total_cases) AS total_cases,
+  SUM(total_vaccinations) AS total_vaccinations,
+  SUM(total_vaccinations/population) AS percent_vaccinated,
+  SUM(total_deaths) AS total_deaths,
+  SUM(total_deaths/population) AS percent_deaths
+FROM
+  dami-389701.corona.corona_death
+WHERE
+  continent IS NOT NULL
+GROUP BY
+  location
+ORDER BY
+  total_cases DESC;
+
+#show the percentage of deaths in location by their months
+#location == nigeria
+
+SELECT
+  location,
+  EXTRACT(YEAR FROM date) AS year,
+  EXTRACT(MONTH FROM date) AS month,
+  CASE EXTRACT(MONTH FROM date)
+    WHEN 1 THEN 'January'
+    WHEN 2 THEN 'February'
+    WHEN 3 THEN 'March'
+    WHEN 4 THEN 'April'
+    WHEN 5 THEN 'May'
+    WHEN 6 THEN 'June'
+    WHEN 7 THEN 'July'
+    WHEN 8 THEN 'August'
+    WHEN 9 THEN 'September'
+    WHEN 10 THEN 'October'
+    WHEN 11 THEN 'November'
+    WHEN 12 THEN 'December'
+  END AS month_name,
+  SUM(total_cases) AS total_cases,
+  SUM(total_vaccinations) AS total_vaccinations,
+  SUM(total_deaths) AS total_deaths,
+  SUM(total_deaths / total_cases) * 100 AS percent_deaths
+FROM
+  dami-389701.corona.corona_death
+WHERE
+  location = 'Nigeria'
+GROUP BY
+  location,
+  year,
+  month,
+  month_name
+ORDER BY
+  year,
+  month;
+
+#show percentage of death_per_population,death_per_case,percent_population_vaccinated per location
+#location== nigeria 
+
+SELECT
+  location,
+  SUM(population) as population,
+  SUM(total_cases) AS total_cases,
+  SUM(total_vaccinations) AS total_vaccinations,
+  SUM(total_deaths) AS total_deaths,
+  sum(total_deaths/population)*100 as death_per_population,
+  sum(total_deaths/total_cases)*100 as death_per_case,
+  sum(total_vaccinations/population)*100 as percent_population_vaccinated
+FROM
+  dami-389701.corona.corona_death
+WHERE
+  location = 'Nigeria'
+GROUP BY
+  location;
+
+#did poverty influence spread of covid infection
+
+SELECT
+  continent,
+  SUM(population) as population,
+  cast (sum(extreme_poverty) as int64) as poverty,
+  SUM(total_cases) AS total_cases,
+  SUM(total_vaccinations) AS total_vaccinations,
+  SUM(total_vaccinations/population) AS percent_vaccinated,
+FROM
+  dami-389701.corona.corona_death
+WHERE
+  continent IS NOT NULL
+GROUP BY
+  continent
+ORDER BY
+  total_cases DESC;
