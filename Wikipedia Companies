@@ -1,3 +1,6 @@
+#the objective was to extract the top 50 US companies on wikipedia page into a csv file
+
+
 #install the packages 
 pip install beautifulsoup4 requests numpy
 
