@@ -1,0 +1,44 @@
+#install the packages 
+pip install beautifulsoup4 requests numpy
+
+#import the packages to be used
+import requests
+from bs4 import BeautifulSoup
+import numpy
+import pandas as pd
+
+#get the url you would be scrapping
+data = 'https://en.wikipedia.org/wiki/List_of_largest_companies_by_revenue'
+
+#pass the website into soup to get the html makeup of the website
+website = requests.get(data)           
+soup = BeautifulSoup(website.text, 'html')
+print(soup)
+
+#find the exact table to be scraped
+table = soup.find('table', class_="wikitable sortable" )
+table
+
+#print out the columns in a dataframe
+names_column = table.find_all('th')[0:7]
+names_column
+column_names= [elements.text.strip() for elements in names_column]
+print(column_names)
+df = pd.DataFrame(columns = column_names[1:])
+df
+
+#print out the rows in a dataframe 
+
+names_row = table.find_all('tr')[1:58]
+names_row
+for row in names_row[1:]:
+    row_data = (row.find_all('td'))
+    individual_row_data = [data.text.strip() for data in row_data]
+    
+    individual_row_data = individual_row_data[:-2]
+    #print(individual_row_data)
+    length = len(df)
+    df.loc[length] = individual_row_data
+df	
+#save table to a file
+df.to_csv(r'C:\Users\Hp\Desktop\python\companies.csv')
