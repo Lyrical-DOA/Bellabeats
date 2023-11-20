@@ -1,0 +1,37 @@
+#calculate for distance from the given longitude and latitude
+
+SELECT
+    *,
+    ROUND(0.621371 * 3959 * 2 * ASIN(SQRT(
+        POWER(SIN(RADIANS(ABS(From_Lat) - ABS(To_Lat)) / 2), 2) +
+        COS(RADIANS(ABS(From_Lat))) * COS(RADIANS(ABS(To_Lat))) *
+        POWER(SIN(RADIANS(ABS(From_Long) - ABS(To_Long)) / 2), 2)
+    )), 2) AS distance_in_miles,
+    -- Calculate Fuel (m3)
+    ROUND((0.166 * 0.621371 * 3959 * 2 * ASIN(SQRT(
+        POWER(SIN(RADIANS(ABS(From_Lat) - ABS(To_Lat)) / 2), 2) +
+        COS(RADIANS(ABS(From_Lat))) * COS(RADIANS(ABS(To_Lat))) *
+        POWER(SIN(RADIANS(ABS(From_Long) - ABS(To_Long)) / 2), 2)
+    )) * 0.0045), 4) AS fuel_m3,
+    -- Calculate Diesel (kg) consumption
+    ROUND((0.166 * 0.621371 * 3959 * 2 * ASIN(SQRT(
+        POWER(SIN(RADIANS(ABS(From_Lat) - ABS(To_Lat)) / 2), 2) +
+        COS(RADIANS(ABS(From_Lat))) * COS(RADIANS(ABS(To_Lat))) *
+        POWER(SIN(RADIANS(ABS(From_Long) - ABS(To_Long)) / 2), 2)
+    )) * 0.0045) * 0.86 * 1000, 2) AS diesel_kg,
+    -- Calculate CO2
+    ROUND((0.166 * 0.621371 * 3959 * 2 * ASIN(SQRT(
+        POWER(SIN(RADIANS(ABS(From_Lat) - ABS(To_Lat)) / 2), 2) +
+        COS(RADIANS(ABS(From_Lat))) * COS(RADIANS(ABS(To_Lat))) *
+        POWER(SIN(RADIANS(ABS(From_Long) - ABS(To_Long)) / 2), 2)
+    )) * 0.0045) * 0.86 * 1000 * 3.164), 2) AS co2
+FROM [tansport].[dbo].[NEW$];
+
+#filter for the table contianing location code 4231,6193,325 on either the to location or from location
+
+SELECT *
+FROM [ponmile].[dbo].[new$]
+WHERE 
+    ([From Location] = 'Location Code 6193' OR [From Location] = 'Location Code 4231' OR [From Location] = 'Location Code 325')
+    or 
+    ([To Location] = 'Location Code 6193' OR [To Location] = 'Location Code 4231' OR [To Location] = 'Location Code 325')
